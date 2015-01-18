@@ -21,10 +21,6 @@ type MyEvent struct {
 	Foo string `json:"foo"`
 }
 
-func (MyEvent) ProjectID() string {
-	return "12345"
-}
-
 func (MyEvent) CollectionName() string {
 	return "awesomeness"
 }
@@ -42,7 +38,7 @@ func TestWrite(t *testing.T) {
 		c.Client = mo
 	}
 
-	k := NewClient(setMock, func(c *Client) {
+	k := NewClient("12345", setMock, func(c *Client) {
 		c.WriteKey = "abcdefg"
 	})
 
@@ -80,7 +76,7 @@ func TestWrite_NotCreatedReturnsError(t *testing.T) {
 		c.Client = mo
 	}
 
-	k := NewClient(setMock, func(c *Client) {
+	k := NewClient("12345", setMock, func(c *Client) {
 		c.WriteKey = "abcdefg"
 	})
 
@@ -89,7 +85,7 @@ func TestWrite_NotCreatedReturnsError(t *testing.T) {
 }
 
 func TestWrite_RequiresProperKey(t *testing.T) {
-	err := NewClient().Write(MyEvent{"bar"})
+	err := NewClient("12345").Write(MyEvent{"bar"})
 	assert.Equal(t, "key error: authorization key required", err.Error())
 }
 
@@ -110,12 +106,12 @@ func TestQuery(t *testing.T) {
 		c.Client = mo
 	}
 
-	k := NewClient(setMock, func(c *Client) {
+	k := NewClient("67890", setMock, func(c *Client) {
 		c.ReadKey = "hijklm"
 	})
 
 	var d MyResult
-	q := query.Count("67890", "awesome-events")
+	q := query.Count("awesome-events")
 	err := k.Query(q, &d)
 	if err != nil {
 		t.Fatal(err)
@@ -140,6 +136,6 @@ func TestQuery(t *testing.T) {
 }
 
 func TestQuery_RequiresProperKey(t *testing.T) {
-	err := NewClient().Query(query.Count("67890", "awesome-events"), nil)
+	err := NewClient("67890").Query(query.Count("awesome-events"), nil)
 	assert.Equal(t, "key error: authorization key required", err.Error())
 }

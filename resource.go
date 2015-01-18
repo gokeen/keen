@@ -19,7 +19,8 @@ var (
 // QueryResource implements a struct for query based read calls
 type QueryResource struct {
 	Query
-	Key string
+	Key       string
+	ProjectID string
 }
 
 func (q QueryResource) Authorization() string {
@@ -28,7 +29,7 @@ func (q QueryResource) Authorization() string {
 
 func (q QueryResource) Path() string {
 	return fmt.
-		Sprintf(resourcefmt, q.Query.ProjectID(), "queries", q.Query.QueryType())
+		Sprintf(resourcefmt, q.ProjectID, "queries", q.Query.QueryType())
 }
 
 func (q QueryResource) Data() interface{} {
@@ -38,7 +39,8 @@ func (q QueryResource) Data() interface{} {
 // EventResource implements a struct for event based write calls
 type EventResource struct {
 	Event
-	Key string
+	Key       string
+	ProjectID string
 }
 
 func (q EventResource) Authorization() string {
@@ -47,7 +49,7 @@ func (q EventResource) Authorization() string {
 
 func (q EventResource) Path() string {
 	return fmt.
-		Sprintf(resourcefmt, q.Event.ProjectID(), "events", q.Event.CollectionName())
+		Sprintf(resourcefmt, q.ProjectID, "events", q.Event.CollectionName())
 }
 
 func (q EventResource) Data() interface{} {

@@ -2,7 +2,6 @@ package keen
 
 // Event represents the interface for an event object to be written to keen
 type Event interface {
-	ProjectID() string
 	CollectionName() string
 }
 

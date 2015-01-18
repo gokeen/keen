@@ -21,11 +21,13 @@ type Client struct {
 	ReadKey   string
 	WriteKey  string
 	MasterKey string
+	ProjectID string
 }
 
-func NewClient(opts ...func(c *Client)) *Client {
+func NewClient(id string, opts ...func(c *Client)) *Client {
 	c := &Client{
-		Client: http.DefaultClient,
+		Client:    http.DefaultClient,
+		ProjectID: id,
 	}
 
 	for _, v := range opts {
@@ -93,7 +95,7 @@ func (c Client) Write(e Event) error {
 
 // WriteResp returns the raw http response when writing an event to keen
 func (c Client) WriteResp(evt Event) (*http.Response, error) {
-	req, err := NewRequest(&EventResource{evt, c.WriteKey})
+	req, err := NewRequest(&EventResource{evt, c.WriteKey, c.ProjectID})
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +119,7 @@ func (c Client) Query(qry Query, d interface{}) error {
 
 // QueryResp makes a keen query and returns the raw http response
 func (c Client) QueryResp(qry Query) (*http.Response, error) {
-	req, err := NewRequest(&QueryResource{qry, c.ReadKey})
+	req, err := NewRequest(&QueryResource{qry, c.ReadKey, c.ProjectID})
 	if err != nil {
 		return nil, err
 	}
