@@ -18,7 +18,7 @@ __gopkg.in__
 
 ## Example
 
-    k := keen.NewClient(func(c *keen.Client) {
+    k := keen.NewClient("aprojectid", func(c *keen.Client) {
       c.WriteKey = "awritekey"
     })
 
@@ -35,10 +35,6 @@ BYO-Event struct by implementing the `Event` interface.
     type MyEvent struct{
       Action string    `json:"action"`
       Time   time.Time `json:"time"`
-    }
-
-    func (MyEvent) ProjectID() string {
-      return "aprojectid"
     }
 
     func (MyEvent) CollectionName() string {
