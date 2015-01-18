@@ -34,11 +34,11 @@ func TestWrite(t *testing.T) {
 	}
 	mo.Start()
 	defer mo.Done()
-	var setMock = func(c *Client) {
+	var setMock = func(c *KeenClient) {
 		c.Client = mo
 	}
 
-	k := NewClient("12345", setMock, func(c *Client) {
+	k := NewClient("12345", setMock, func(c *KeenClient) {
 		c.WriteKey = "abcdefg"
 	})
 
@@ -72,11 +72,11 @@ func TestWrite_NotCreatedReturnsError(t *testing.T) {
 	}
 	mo.Start()
 	defer mo.Done()
-	var setMock = func(c *Client) {
+	var setMock = func(c *KeenClient) {
 		c.Client = mo
 	}
 
-	k := NewClient("12345", setMock, func(c *Client) {
+	k := NewClient("12345", setMock, func(c *KeenClient) {
 		c.WriteKey = "abcdefg"
 	})
 
@@ -102,11 +102,11 @@ func TestQuery(t *testing.T) {
 	}
 	mo.Start()
 	defer mo.Done()
-	var setMock = func(c *Client) {
+	var setMock = func(c *KeenClient) {
 		c.Client = mo
 	}
 
-	k := NewClient("67890", setMock, func(c *Client) {
+	k := NewClient("67890", setMock, func(c *KeenClient) {
 		c.ReadKey = "hijklm"
 	})
 

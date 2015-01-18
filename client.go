@@ -16,7 +16,14 @@ const (
 	API_VERSION = "3.0"
 )
 
-type Client struct {
+type Client interface {
+	Write(Event) error
+	WriteResp(Event) (*http.Response, error)
+	Query(Query, interface{}) error
+	QueryResp(Query) (*http.Response, error)
+}
+
+type KeenClient struct {
 	Client    httpclient.Interface
 	ReadKey   string
 	WriteKey  string
@@ -24,8 +31,8 @@ type Client struct {
 	ProjectID string
 }
 
-func NewClient(id string, opts ...func(c *Client)) *Client {
-	c := &Client{
+func NewClient(id string, opts ...func(c *KeenClient)) Client {
+	c := &KeenClient{
 		Client:    http.DefaultClient,
 		ProjectID: id,
 	}
@@ -37,7 +44,7 @@ func NewClient(id string, opts ...func(c *Client)) *Client {
 	return c
 }
 
-func (c Client) Do(req *http.Request) (*http.Response, error) {
+func (c KeenClient) Do(req *http.Request) (*http.Response, error) {
 	return c.Client.Do(req)
 }
 
@@ -76,7 +83,7 @@ func decode(r io.ReadCloser, d interface{}) error {
 }
 
 // Write writes an Event to keen returning an error if not created
-func (c Client) Write(e Event) error {
+func (c KeenClient) Write(e Event) error {
 	resp, err := c.WriteResp(e)
 	if err != nil {
 		return err
@@ -94,7 +101,7 @@ func (c Client) Write(e Event) error {
 }
 
 // WriteResp returns the raw http response when writing an event to keen
-func (c Client) WriteResp(evt Event) (*http.Response, error) {
+func (c KeenClient) WriteResp(evt Event) (*http.Response, error) {
 	req, err := NewRequest(&EventResource{evt, c.WriteKey, c.ProjectID})
 	if err != nil {
 		return nil, err
@@ -104,7 +111,7 @@ func (c Client) WriteResp(evt Event) (*http.Response, error) {
 }
 
 // Query makes a keen query and decods the results to a given object
-func (c Client) Query(qry Query, d interface{}) error {
+func (c KeenClient) Query(qry Query, d interface{}) error {
 	resp, err := c.QueryResp(qry)
 	if err != nil {
 		return err
@@ -118,7 +125,7 @@ func (c Client) Query(qry Query, d interface{}) error {
 }
 
 // QueryResp makes a keen query and returns the raw http response
-func (c Client) QueryResp(qry Query) (*http.Response, error) {
+func (c KeenClient) QueryResp(qry Query) (*http.Response, error) {
 	req, err := NewRequest(&QueryResource{qry, c.ReadKey, c.ProjectID})
 	if err != nil {
 		return nil, err
