@@ -18,7 +18,7 @@ __gopkg.in__
 
 ## Example
 
-    k := keen.NewClient("aprojectid", func(c *keen.Client) {
+    k := keen.NewClient("aprojectid", func(c *keen.KeenClient) {
       c.WriteKey = "awritekey"
     })
 
